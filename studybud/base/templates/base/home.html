@@ -5,7 +5,7 @@
     <div>
         {% for room in rooms %}
             <div>
-                <h5>This room's id is {{room.id}} , where we learn {{room.names}}</h5>
+                <a><h5>This room's id is {{room.id}} , where we learn <a href="{% url 'room' room.id %}">{{room.names}}</a></h5>
             </div>
         {%endfor%}
     </div>
