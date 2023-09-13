@@ -14,7 +14,7 @@ def home(request):
     return render(request ,'base/home.html', context  ) # pass in the context dictionary 
 
 def room(request , pk ):
-    room = None 
+    room = Room.objects.all() 
     for i in rooms:
         if i['id'] == int(pk) :
             room  = i 
