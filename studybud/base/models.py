@@ -6,6 +6,10 @@ class Topic(models.Model):
     # A topic can have multiple room 
     # A room can have only one topic 
     name = models.CharField(max_length=200)
+    
+    def __str__(self):
+        return self.name
+
 
 class Room(models.Model):
     host = models.ForeignKey(User , on_delete=models.SET_NULL ,null=True)
