@@ -2,10 +2,18 @@
 {%block content%}
 <h1> Welcome to Home </h1>
 <div>
+    <a href="{% url 'create-room' %}">Create Room</a>
     <div>
         {% for room in rooms %}
             <div>
-                <a><h5>This room's id is {{room.id}} , where we learn <a href="{% url 'room' room.id %}">{{room.names}}</a></h5>
+                <a href="{% url 'update-room' room.id %}">Edit</a>
+                <a href="{% url 'delete-room' room.id %}">Delete</a>
+
+                <span>@{{room.host.username}}</span>
+                <a>This room's id is {{room.id}} , where we learn <a href="{% url 'room' room.id %}">{{room.names}}</a>
+                <!-- <span>@{{room.topic.name}}</span> -->
+                <small>{{room.topic.name}}</small>
+                <hr>
             </div>
         {%endfor%}
     </div>
