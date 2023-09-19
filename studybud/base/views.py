@@ -1,8 +1,37 @@
 from django.shortcuts import render , redirect 
-from .models import Room , Topic
+from .models import Room , Topic , User
+from django.contrib import  messages
+from django.contrib.auth import authenticate , login ,  logout 
 from .forms import RoomForm
 from django.db.models import Q
 # Create your views here.
+
+
+def login_page(request):
+    if request.method == 'POST':
+        username = request.POST.get("User-Name")
+        password = request.POST.get("password")
+
+        try :
+            user = User.objects.get(username=username)
+        except:
+            messages.error(request , "User doesn't exist")
+
+        user = authenticate(request , username=username , password=password)
+
+        if user is not None :
+            login(request , user )
+            return redirect('home')
+        else :
+            messages.error(request , "The password you have enetered is incorrect ")
+
+    return render(request , 'base/login_registration.html')
+
+def logout_page(request):
+    logout(request)
+    return render(request , 'base/login_registration.html')
+
+
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else '' 
 
