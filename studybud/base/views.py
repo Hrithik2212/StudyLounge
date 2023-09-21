@@ -1,13 +1,16 @@
 from django.shortcuts import render , redirect 
+from django.http import HttpResponse
 from .models import Room , Topic , User
 from django.contrib import  messages
+from django.contrib.auth.decorators import login_required 
 from django.contrib.auth import authenticate , login ,  logout 
-from .forms import RoomForm
+from .forms import RoomForm , UserForm
 from django.db.models import Q
 # Create your views here.
 
 
 def login_page(request):
+    page = 'login'
     if request.method == 'POST':
         username = request.POST.get("User-Name")
         password = request.POST.get("password")
@@ -17,20 +20,54 @@ def login_page(request):
         except:
             messages.error(request , "User doesn't exist")
 
+        if request.user.is_authenticated:
+            return redirect('home')
+        
         user = authenticate(request , username=username , password=password)
 
         if user is not None :
             login(request , user )
             return redirect('home')
         else :
-            messages.error(request , "The password you have enetered is incorrect ")
+            messages.error(request , "The password you have entered is incorrect ")
+        
+    context = {'page' : page }
 
-    return render(request , 'base/login_registration.html')
+    return render(request , 'base/login_registration.html' , context)
 
-def logout_page(request):
+def logoutUser(request):
     logout(request)
-    return render(request , 'base/login_registration.html')
+    return redirect('blogin')
 
+def registerUser(request):
+    print('Register got triggered')
+    page = 'register'
+    context = {'page':page}
+    if request.method == 'POST' : 
+        # print('Post works ')
+        username = request.POST.get('User-Name')
+        password= request.POST.get('password')
+        repassword = request.POST.get('repassword')
+        if password != repassword :
+            messages.error(request , 'The passwords you have entered dose not match')
+
+        else :    
+            try:
+                User.objects.get(username=username)
+                messages.error(request , 'The username aldready exists')
+            except :
+                # print('Except block')
+                user_form = UserForm(request.POST)
+                print(user_form.errors)
+                
+                if user_form.is_valid():
+                    print('if worked')
+                    form=user_form.save(commit=False)
+                    form.save()
+                    return redirect('login')
+            
+
+    return render(request , 'base/login_registration.html' , context )
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else '' 
@@ -50,6 +87,7 @@ def room(request , pk ):
     return render(request , 'base/room.html' ,context )
 
 
+@login_required(login_url='/login')
 def create_room(request):
     form = RoomForm()
     if request.method == 'POST':
@@ -60,9 +98,12 @@ def create_room(request):
     context  = {'form':form} 
     return render(request , 'base/room_form.html', context )
 
+@login_required(login_url='/login')
 def update_room(request , pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
+    if request.user != room.host :
+        return HttpResponse("This room is not built by you , so you can't delete it ")
     context = {'form':form}
     if request.method == 'POST':
         form = RoomForm(request.POST , instance=room)
@@ -72,8 +113,11 @@ def update_room(request , pk):
 
     return render(request , 'base/room_form.html' , context ) 
 
+@login_required(login_url='/login')
 def delete_room(request , pk ):
     room = Room.objects.get(id=pk)
+    if request.user != room.host :
+        return HttpResponse("This room is not built by you , so you can't delete it ")
     if request.method == 'POST':
         room.delete()
         return redirect('home')
