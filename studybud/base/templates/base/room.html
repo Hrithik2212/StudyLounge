@@ -1,16 +1,29 @@
 {% extends 'Main.html'%}
 {%block content%}
-<h1>Welcome to rooms </h1>
-<h2>{{room.names}}</h2>
-<p>{{room.description}}</p>
-
-<div class="comment-wrapper">
-    <h3>Chat Section</h3>
-    {% for message in messages %}
-        <div>
-            <small>@{{message.user}} {{message.created}}</small>
-            <p> {{message.body}}</p>
-        </div>
-    {% endfor %}
+<div class="description-wrapper">
+    <h1>Welcome to the room </h1>
+    <h2>Room : {{room.names}}</h2>
+    <p>{{room.description}}</p>
+    <br>
 </div>
+<main>
+    <div class="comment-wrapper">
+        <h3>Chat Section</h3>
+        {% for message in messages %}
+            <div>
+                <small>@{{message.user}} {{message.created}}</small>
+                <p> {{message.body}}</p>
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+    {% if request.user.is_authenticated %}
+    <div>
+        <form method="POST"   action="">
+            {% csrf_token %}
+            <input type='text' name="body" placeholder="Enter your message here " />
+        </form>
+    </div>
+</main>
+{% endif %}
 {%endblock%} 

@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect 
 from django.http import HttpResponse
-from .models import Room , Topic , User
+from .models import *
 from django.contrib import  messages
 from django.contrib.auth.decorators import login_required 
 from django.contrib.auth.forms import UserCreationForm
@@ -38,7 +38,7 @@ def login_page(request):
 
 def logoutUser(request):
     logout(request)
-    return redirect('blogin')
+    return redirect('login')
 
 def registerUser(request):
     page = 'register'
@@ -108,7 +108,15 @@ def home(request):
 
 def room(request , pk ):
     room = Room.objects.get(id=pk) 
-    messages = room.message_set.all()
+    messages = room.message_set.all().order_by('created')
+
+    if request.method == 'POST' :
+        message =  Message.objects.create(
+            user = request.user , 
+            room = room , 
+            body = request.POST.get('body')
+        )
+        return redirect('room' , pk=room.id )
     context = {'room' : room , 'messages':messages }
     return render(request , 'base/room.html' ,context )
 
