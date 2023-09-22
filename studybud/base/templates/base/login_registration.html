@@ -20,7 +20,8 @@
 <div>  
     <form method="POST"  action="">
         {% csrf_token %}
-        <label>Enter Username :</label>
+        {{ form.as_p }}
+        <!-- <label>Enter Username :</label>
         <input type="text" name="User-Name" placeholder="Enter User Name :" required/ >
         <br>
         <label>Enter Password :</label>
@@ -28,7 +29,7 @@
         <br>
         <label>Re-Enter Your Password :</label>
         <input type="password" name="repassword" placeholder="Renter password :" required/ >
-        <br>
+        <br> -->
         <input type="submit" value="Register"/>
         {% if messages %}
 		<div class="messages">

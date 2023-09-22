@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import Room , Topic , User
 from django.contrib import  messages
 from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate , login ,  logout 
 from .forms import RoomForm , UserForm
 from django.db.models import Q
@@ -40,34 +41,58 @@ def logoutUser(request):
     return redirect('blogin')
 
 def registerUser(request):
-    print('Register got triggered')
     page = 'register'
-    context = {'page':page}
-    if request.method == 'POST' : 
-        # print('Post works ')
-        username = request.POST.get('User-Name')
-        password= request.POST.get('password')
-        repassword = request.POST.get('repassword')
-        if password != repassword :
-            messages.error(request , 'The passwords you have entered dose not match')
+    form = UserCreationForm()
+    # context = {'page' : page , 'form':form }
+    if request.method == 'POST' :
+        form = UserCreationForm(request.POST)
+        if form.is_valid() :
+            user_name = request.POST.get('username')
+            password = request.POST.get('password')
+            try : 
+                User.objects.get(user_name= user_name)
+                messages.error(request ,"Username aldready exists")
+            except: 
+                user = form.save(commit=False)
+                user.username = user.username.lower()
+                user.save()
+                login(request , user)
+                return redirect('home')
+        else : 
+            messages.error(request , 'An error occured during registration')
+    
+    context = {'page' : page , 'form':form }
+    return render(request , 'base/login_registration.html' , context)
 
-        else :    
-            try:
-                User.objects.get(username=username)
-                messages.error(request , 'The username aldready exists')
-            except :
-                # print('Except block')
-                user_form = UserForm(request.POST)
-                print(user_form.errors)
+# def registerUser(request):
+#     print('Register got triggered')
+#     page = 'register'
+#     context = {'page':page}
+#     if request.method == 'POST' : 
+#         # print('Post works ')
+#         username = request.POST.get('User-Name')
+#         password= request.POST.get('password')
+#         repassword = request.POST.get('repassword')
+#         if password != repassword :
+#             messages.error(request , 'The passwords you have entered dose not match')
+
+#         else :    
+#             try:
+#                 User.objects.get(username=username)
+#                 messages.error(request , 'The username aldready exists')
+#             except :
+#                 # print('Except block')
+#                 user_form = UserForm(request.POST)
+#                 print(user_form.errors)
                 
-                if user_form.is_valid():
-                    print('if worked')
-                    form=user_form.save(commit=False)
-                    form.save()
-                    return redirect('login')
+#                 if user_form.is_valid():
+#                     print('if worked')
+#                     form=user_form.save(commit=False)
+#                     form.save()
+#                     return redirect('login')
             
 
-    return render(request , 'base/login_registration.html' , context )
+#     return render(request , 'base/login_registration.html' , context )
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else '' 
@@ -82,8 +107,9 @@ def home(request):
     return render(request ,'base/home.html', context  ) # pass in the context dictionary 
 
 def room(request , pk ):
-    rooms = Room.objects.get(id=pk) 
-    context = {'room' : rooms}
+    room = Room.objects.get(id=pk) 
+    messages = room.message_set.all()
+    context = {'room' : room , 'messages':messages }
     return render(request , 'base/room.html' ,context )
 
 

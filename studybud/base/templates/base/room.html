@@ -1,6 +1,16 @@
 {% extends 'Main.html'%}
 {%block content%}
 <h1>Welcome to rooms </h1>
-<h2> This room is for {{room.names}}</h2>
+<h2>{{room.names}}</h2>
 <p>{{room.description}}</p>
+
+<div class="comment-wrapper">
+    <h3>Chat Section</h3>
+    {% for message in messages %}
+        <div>
+            <small>@{{message.user}} {{message.created}}</small>
+            <p> {{message.body}}</p>
+        </div>
+    {% endfor %}
+</div>
 {%endblock%} 
