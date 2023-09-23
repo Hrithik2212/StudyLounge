@@ -101,9 +101,13 @@ def home(request):
         Q(topic__name__icontains=q) |
         Q(names__icontains=q) |
         Q(description__icontains=q)) # .get() , .filter() , .exclude()
-    topics = Topic.objects.all()
+    topics = Topic.objects.all() 
     room_count = rooms.count()
-    context = {'rooms': rooms , 'topics' : topics , 'room_count':room_count} 
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+    context = {'rooms': rooms ,
+                'topics' : topics ,
+                  'room_count':room_count , 
+                  'room_messages' : room_messages} 
     return render(request ,'base/home.html', context  ) # pass in the context dictionary 
 
 def room(request , pk ):
