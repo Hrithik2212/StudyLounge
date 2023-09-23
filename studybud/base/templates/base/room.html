@@ -1,29 +1,49 @@
 {% extends 'Main.html'%}
 {%block content%}
-<div class="description-wrapper">
-    <h1>Welcome to the room </h1>
-    <h2>Room : {{room.names}}</h2>
-    <p>{{room.description}}</p>
-    <br>
-</div>
-<main>
-    <div class="comment-wrapper">
-        <h3>Chat Section</h3>
-        {% for message in messages %}
-            <div>
-                <small>@{{message.user}} {{message.created}}</small>
-                <p> {{message.body}}</p>
-                <hr>
-            </div>
+
+<style>
+    .room-container {
+        display : grid ;
+        grid-template-columns: 3fr 1fr;
+        grid-column-gap: 20px;
+    }
+</style>
+<div class="room-container">
+    <div>
+        <div class="description-wrapper">
+            <h1>Welcome to the room </h1>
+            <h2>Room : {{room.names}} </h2>
+            <p>{{room.description}}</p>
+            <br>
+        </div>
+        
+        <div class="comment-wrapper">
+            <h3>Chat Section</h3>
+            {% for message in messages %}
+                <div>
+                    <small>@{{message.user}} {{message.created}}</small>
+                    <p> {{message.body}}</p>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
+        {% if request.user.is_authenticated %}
+        <div>
+            <form method="POST"   action="">
+                {% csrf_token %}
+                <input type='text' name="body" placeholder="Enter your message here " />
+            </form>
+        </div>
+    </div>
+    <div>
+        <h3> Participants </h3>
+        
+        {% for user in participants %}
+        <div>
+        <p> @{{user.username}} </p>
+        </div>
         {% endfor %}
     </div>
-    {% if request.user.is_authenticated %}
-    <div>
-        <form method="POST"   action="">
-            {% csrf_token %}
-            <input type='text' name="body" placeholder="Enter your message here " />
-        </form>
-    </div>
-</main>
+</div>
 {% endif %}
 {%endblock%} 
