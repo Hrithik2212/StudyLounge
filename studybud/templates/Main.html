@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
-    <title>Study Bud </title>
-</head>
-<body class="body">
-    {%include 'navbar.html'%}
-    <!-- {% if messages %}
+    <link rel="stylesheet" href="styles/main.css" />
+    <title>StudyLounge - Find study partners around the world!</title>
+  </head>
+
+  <body>
+   
+	{%include 'navbar.html'%}
+	    <!-- {% if messages %}
 		<div class="messages">
 		{% for message in messages %}
 			<div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
@@ -18,8 +22,14 @@
 		{% endfor %}
 		</div>
 	{% endif %} -->
-    {% block content %} 
+	{% block content %} 
     
     {% endblock %}
+	<script src="{% static 'javascript/main.js' %}">
+	</script>
 </body>
 </html>
+
+
+
+
