@@ -66,12 +66,15 @@ def registerUser(request):
 
 def userProfile(request , pk):
     user = User.objects.get(id=pk)
-    rooms = user.room_set.all() # model_set method is used to refer ReverseRelation ships 
+     # rooms = user.room_set.all() # model_set method is used to refer ReverseRelation ships 
     user_message = Message.objects.filter(user__id=pk)
+    rooms = Room.objects.filter(host__id=pk)
+    topics = Topic.objects.all()
     context = {'rooms':rooms , 
                'user':user ,
                'room_messages':user_message,
-               'page':'profile'} 
+               'page':'profile',
+               'topics':topics} 
     return render(request , 
                   'base/profile.html' , 
                   context )
