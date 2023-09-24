@@ -54,7 +54,7 @@
             </div>
           </div>
           <div class="roomListRoom__content">
-            <a href="room.html">{{ room.names }}</a>
+            <a href="{% url 'room' room.id %}">{{ room.names }}</a>
             <p>
               {{room}}
             </p>
