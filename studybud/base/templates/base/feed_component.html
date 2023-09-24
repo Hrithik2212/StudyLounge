@@ -3,12 +3,12 @@
 {% endif %}
 {% for room in rooms %}
             <div>
+                <a href="{% url 'user-profile' room.host.id %}">@{{room.host.username}}</a>
                 
                 {% if request.user.id == room.host.id %}
                     <a href="{% url 'update-room' room.id %}">Edit</a>
                     <a href="{% url 'delete-room' room.id %}">Delete</a>
                 {% endif %}
-                <a href="{% url 'user-profile' room.host.id %}">@{{room.host.username}}</a>
                 <br>
                 <a href="{% url 'room' room.id %}">{{room.names}}</a>
                 <br>
